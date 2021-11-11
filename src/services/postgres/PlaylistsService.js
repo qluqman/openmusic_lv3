@@ -8,7 +8,7 @@ class PlaylistsService {
   constructor(collaborationService, cacheService) {
     this._pool = new Pool();
     this._collaborationService = collaborationService;
-    this._chacheService = cacheService;
+    this._cacheService = cacheService;
   }
 
   async addPlaylist({
