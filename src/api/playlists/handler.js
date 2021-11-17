@@ -7,6 +7,8 @@ class PlaylistsHandler {
 
     this.postPlaylistHandler = this.postPlaylistHandler.bind(this);
     this.getPlaylistHandler = this.getPlaylistHandler.bind(this);
+    this.getPlaylistByIdHandler = this.getPlaylistByIdHandler.bind(this);
+    this.putPlaylistByIdHandler = this.putPlaylistByIdHandler.bind(this);
     this.deletePlaylistByIdHandler = this.deletePlaylistByIdHandler.bind(this);
   }
 
@@ -60,6 +62,73 @@ class PlaylistsHandler {
       response.code(200);
       return response;
     } catch (error) {
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      console.error(error);
+      return response;
+    }
+  }
+
+  async getPlaylistByIdHandler(request, h) {
+    try {
+      const { id } = request.params;
+      const { id: credentialId } = request.auth.credentials;
+
+      // await this._service.verifyPlaylistOwner(playlistId, credentialId)
+      await this._service.verifyPlaylistAccess(id, credentialId);
+      const playlist = await this._service.getPlaylistsById(id);
+      return {
+        status: 'success',
+        data: {
+          playlist,
+        },
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return response;
+      }
+
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      console.error(error);
+      return response;
+    }
+  }
+
+  async putPlaylistByIdHandler(request, h) {
+    try {
+      this._validator.validatePlaylistsPayload(request.payload);
+      const { id } = request.params;
+      const { id: credentialId } = request.auth.credentials;
+
+      // await this._service.verifyPlaylistOwner(playlistId, credentialId)
+      await this._service.verifyPlaylistAccess(id, credentialId);
+      await this._service.editPlaylistById(id, request.payload);
+      return {
+        status: 'success',
+        message: 'playlist berhasil diperbarui',
+      };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return response;
+      }
+
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.',

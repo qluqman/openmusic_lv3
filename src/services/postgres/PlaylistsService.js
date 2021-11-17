@@ -25,13 +25,12 @@ class PlaylistsService {
     if (!result.rows[0].id) {
       throw new InvariantError('Playlist gagal ditambahkan');
     }
-    await this._cacheService.delete(`playlists:${owner}`);
+    await this._cacheService.delete(`playlists:${id}`);
     return result.rows[0].id;
   }
 
   async getPlaylist(owner) {
     try {
-      // mendapatkan catatan dari cache
       const result = await this._cacheService.get(`playlists:${owner}`);
       return JSON.parse(result);
     } catch (error) {
@@ -41,7 +40,6 @@ class PlaylistsService {
       };
       const result = await this._pool.query(query);
       await this._cacheService.set(`playlists:${owner}`, JSON.stringify(result));
-      // console.log(result.rows);
       return result.rows;
     }
   }
@@ -51,9 +49,7 @@ class PlaylistsService {
       text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
       values: [id],
     };
-
     const result = await this._pool.query(query);
-
     if (!result.rows.length) {
       throw new NotFoundError('Playlist gagal dihapus. Id tidak ditemukan');
     }
@@ -76,7 +72,6 @@ class PlaylistsService {
     }
   }
 
-  // Verify playlist by access
   async verifyPlaylistAccess(playlistId, userId) {
     try {
       await this.verifyPlaylistOwner(playlistId, userId);
@@ -92,4 +87,5 @@ class PlaylistsService {
     }
   }
 }
+
 module.exports = PlaylistsService;

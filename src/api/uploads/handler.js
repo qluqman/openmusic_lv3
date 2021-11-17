@@ -19,7 +19,7 @@ class UploadsHandler {
         status: 'success',
         message: 'Gambar berhasil diunggah',
         data: {
-          fileLocation: `http://${process.env.HOST}:${process.env.PORT}/upload/images/${filename}`,
+          pictureUrl: `http://${process.env.HOST}:${process.env.PORT}/upload/pictures/${filename}`,
         },
       });
       response.code(201);

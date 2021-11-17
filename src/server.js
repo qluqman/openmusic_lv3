@@ -16,12 +16,6 @@ const users = require('./api/users');
 const UsersService = require('./services/postgres/UsersService');
 const UsersValidator = require('./validator/users');
 
-// authentications
-const authentications = require('./api/authentications');
-const AuthenticationsService = require('./services/postgres/AuthenticationsService');
-const TokenManager = require('./tokenize/TokenManager');
-const AuthenticationsValidator = require('./validator/authentications');
-
 // playlist
 const playlists = require('./api/playlists');
 const PlaylistsService = require('./services/postgres/PlaylistsService');
@@ -31,6 +25,12 @@ const PlaylistsValidator = require('./validator/playlists');
 const playlistsongs = require('./api/playlistsongs');
 const PlaylistsongsService = require('./services/postgres/PlaylistsongsService');
 const playlistsongsValidator = require('./validator/playlistsongs');
+
+// authentications
+const authentications = require('./api/authentications');
+const AuthenticationsService = require('./services/postgres/AuthenticationsService');
+const TokenManager = require('./tokenize/TokenManager');
+const AuthenticationsValidator = require('./validator/authentications');
 
 // collaborations
 const collaborations = require('./api/collaborations');
@@ -57,7 +57,7 @@ const init = async () => {
   const authenticationsService = new AuthenticationsService();
   const collaborationsService = new CollaborationsService(cacheService);
   const playlistsService = new PlaylistsService(collaborationsService, cacheService);
-  const playlistsongsService = new PlaylistsongsService();
+  const playlistsongsService = new PlaylistsongsService(cacheService);
   const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/pictures')); //uploads
 
   const server = Hapi.server({
