@@ -29,17 +29,17 @@ class PlaylistsService {
     return result.rows[0].id;
   }
 
-  async getPlaylist(owner) {
+  async getPlaylist(Id) {
     try {
-      const result = await this._cacheService.get(`playlists:${owner}`);
+      const result = await this._cacheService.get(`playlists:${Id}`);
       return JSON.parse(result);
     } catch (error) {
       const query = {
         text: 'SELECT playlists.id as id, playlists.name as name, users.username as username FROM playlists INNER JOIN users ON users.id=playlists.owner WHERE playlists.owner = $1',
-        values: [owner],
+      values: [Id],
       };
       const result = await this._pool.query(query);
-      await this._cacheService.set(`playlists:${owner}`, JSON.stringify(result));
+      await this._cacheService.set(`playlists:${Id}`, JSON.stringify(result));
       return result.rows;
     }
   }
