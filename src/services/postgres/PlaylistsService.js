@@ -11,9 +11,7 @@ class PlaylistsService {
     this._cacheService = cacheService;
   }
 
-  async addPlaylist({
-    name, owner,
-  }) {
+  async addPlaylist({name, owner,}) {
     const id = `playlist-${nanoid(16)}`;
     const query = {
       text: 'INSERT INTO playlists VALUES($1, $2, $3) RETURNING id',
@@ -39,7 +37,7 @@ class PlaylistsService {
       values: [Id],
       };
       const result = await this._pool.query(query);
-      await this._cacheService.set(`playlists:${Id}`, JSON.stringify(result));
+      await this._cacheService.set(`playlists:${Id}`, JSON.stringify(result.rows));
       return result.rows;
     }
   }
